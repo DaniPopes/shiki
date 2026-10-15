@@ -182,12 +182,14 @@ export function transformerDecorations(): ShikiTransformer {
         else if (start.line < end.line) {
           applyLineSection(start.line, start.character, Number.POSITIVE_INFINITY, decoration)
           for (let i = start.line + 1; i < end.line; i++)
-            lineApplies.unshift(() => applyLine(i, decoration))
+            lineApplies.push(() => applyLine(i, decoration))
           applyLineSection(end.line, 0, end.character, decoration)
         }
       }
 
-      lineApplies.forEach(i => i())
+      // Apply line decorations in reverse push order.
+      for (let i = lineApplies.length - 1; i >= 0; i--)
+        lineApplies[i]()
     },
   }
 }
